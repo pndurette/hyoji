@@ -8,7 +8,8 @@ api = Api(app)
 from hyoji import models
 
 # Import our own
-from .url import Url
+from .url import Url, UrlList
 
 # Register endpoints
-api.add_resource(Url, '/')
+api.add_resource(Url,     '/url/<url_id>', '/url')
+api.add_resource(UrlList, '/urls')

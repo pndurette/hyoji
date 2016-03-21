@@ -21,13 +21,13 @@ class Url(Resource):
             url = models.Url.get(models.Url.id == url_id)
         except models.Url.DoesNotExist:
             abort(404, message="url {} does not exist".format(url_id))
-        return url.to_dict()
+        return { 'url' : url.to_dict() }
 
     def post(self):
         args = parser.parse_args()
         q = models.Url.insert(name=args['name'], href=args['href'])
         new_id = q.execute()
-        return self.get(new_id), 201
+        return { 'url' : self.get(new_id) }, 201
 
     def put(self, url_id):
         args = parser.parse_args()
@@ -43,12 +43,12 @@ class Url(Resource):
             q = models.Url.insert(id=url_id, name=args['name'],
                                   href=args['href'])
             new_id = q.execute()
-        return self.get(url_id), 201
-
+        return { 'url' : self.get(url_id) }, 201
+ 
     def delete(self, url_id):
         q = models.Url.delete().where(models.Url.id == url_id)
         q.execute()
-        return None 
+        return { 'url' : None } 
 
 class UrlList(Resource):
     def get(self):
@@ -56,4 +56,4 @@ class UrlList(Resource):
         urls = []
         for url in q:
             urls.append(url.to_dict())
-        return urls
+        return { 'urls' : urls }

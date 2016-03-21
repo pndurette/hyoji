@@ -1,10 +1,13 @@
 from hyoji import app
 from flask_restful import Api
-from flask import make_response
+from flask import Blueprint, make_response
 import json
 
-# Flask Restful init
-api = Api(app)
+# API as a Flask Blueprint
+api_bp = Blueprint('api', __name__)
+
+# Flask-Restful init w/ Blueprint
+api = Api(api_bp)
 
 # Import models that the API wll need
 from hyoji import models
@@ -14,34 +17,38 @@ from .url import Url, UrlList
 
 # Register endpoints
 api.add_resource(Url,     '/url/<url_id>', '/url')
-api.add_resource(UrlList, '/urls')
+api.add_resource(UrlList, '/urls', '/urls/')
 
 @api.representation('application/json')
 def output_json(data, code, headers=None):
-    """General API JSON response format"""
+    """General API JSON response format
+    This API follows the simple JSend JSON response format.
+    http://labs.omniti.com/labs/jsend
+    """
     
-    # 'status' field
+    # Top-level payload format
     if http_status_is_bad(code):
-        status = 'error'
-        contents_label = 'message'
-        contents = data['message']
+        # In case of error, flask-restful returns a dict
+        # of the form `{'message': <str or list of stt>}`.
+        # We inject the status string.
+        # {"status": "error", "message": "<an error>"}
+        payload = data
+        payload['status'] = 'error'
     else:
-        status = 'success'
-        contents_label = 'data'
-        contents = data
-
-    # Response format
-    resp_dict = {
-        'status': status,
-        contents_label: contents
-    }
+        # In case of a succes, flask-restful returns
+        # the object as-is. We encapsulate it
+        # as the value of a "data" key.
+        # {"status": "success", "data": <data>}
+        payload = {}
+        payload['status'] = 'success'
+        payload['data'] = data
 
     # Flask response
-    resp = make_response(json.dumps(resp_dict), code)
+    resp = make_response(json.dumps(payload), code)
     resp.headers.extend(headers or {})
     return resp
 
 def http_status_is_bad(status_code):
-    """Returns true if `code` is [400,600["""
+    """Returns true if `code` is [400,600[."""
     if 400 <= status_code < 600: return True
     else: return False

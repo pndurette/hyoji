@@ -2,7 +2,7 @@ from peewee import Model, ForeignKeyField
 
 from hyoji.models import db
 
-class BaseModel(Model):
+class BaseModel(db.Model):
     def to_dict(model, fields=None, exclude=None):
         """
         Taken from flask_peewee.utils.py
@@ -28,6 +28,3 @@ class BaseModel(Model):
             else:
                 data[field_name] = field_data
         return data
-    
-    class Meta:
-        database = db

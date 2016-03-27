@@ -1,4 +1,3 @@
-from hyoji import app
 from flask_restful import Api
 from flask import Blueprint, make_response
 import json

@@ -12,6 +12,7 @@ setup(
     author_email='pndurette@gmail.com',
     url='https://github.com/pndurette/hyoji',
     packages=['hyoji'],
+    test_suite='tests',
     #scripts=['bin/gtts-cli', 'bin/gtts-cli.py'],
     license='MIT',
     description='TBA',

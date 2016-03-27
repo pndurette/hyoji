@@ -1,15 +1,20 @@
 from .version import __version__
 from flask import Flask, Blueprint
 
-import hyoji.config
+import config
 
 # Flask init
 app = Flask(__name__)
-app.config.from_object(hyoji.config)
+app.config.from_object(config)
 
-import hyoji.models
-import hyoji.api 
+import models
+import api 
 #import hyoji.views
 
+# Tests will initialize the DB
+# with their own set of parameters
+if not app.config['TESTING']:
+    models.init_db()
+
 # Blueprints and global endpoint prefixes
-app.register_blueprint(hyoji.api.api_bp, url_prefix='/api')
+app.register_blueprint(api.api_bp, url_prefix='/api')

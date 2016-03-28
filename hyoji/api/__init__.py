@@ -15,7 +15,7 @@ from hyoji import models
 from .url import Url, UrlList
 
 # Register endpoints
-api.add_resource(Url,     '/url/<url_id>', '/url')
+api.add_resource(Url,     '/url/<int:url_id>')
 api.add_resource(UrlList, '/urls', '/urls/')
 
 @api.representation('application/json')

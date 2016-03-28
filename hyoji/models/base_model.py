@@ -1,4 +1,4 @@
-from peewee import Model, ForeignKeyField
+from peewee import ForeignKeyField
 
 from hyoji.models import db
 

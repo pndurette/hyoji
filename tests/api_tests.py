@@ -1,6 +1,7 @@
 import os
 import unittest
 import tempfile
+import json
 
 from hyoji import app
 from hyoji import models
@@ -14,18 +15,22 @@ class HyojiTestCase(unittest.TestCase):
         self.app = app.test_client()
         models.init_db()
 
-        #flaskr.init_db()
-
     def tearDown(self):
         os.close(self.db_fd)
         os.unlink(self.db_path)
 
-    def test_empty_db(self):
+    def test_empty_urls(self):
         rv = self.app.get('/api/urls')
-        print app.config['DATABASE']
-        print rv.data
-        print app.config
-        #assert 'No entries here so far' in rv.data
+        resp = json.loads(rv.data)
+        # {"status": "success", "data": {"urls": []}}
+        self.assertEqual(resp['status'],       'success')
+        self.assertEqual(resp['data']['urls'], [])
+
+    def test_post_url(self):
+        rv = self.app.post('/api/url', data=dict(
+        title='<Hello>',
+        text='<strong>HTML</strong> allowed here'
+    ), follow_redirects=True)
 
 if __name__ == '__main__':
     unittest.main()
